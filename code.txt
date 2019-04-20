@@ -1,0 +1,101 @@
+string builder report code
+score tb config
+gridview config
+
+ string connStr = ConfigurationManager.ConnectionStrings["db1ConnectionString7"].ConnectionString;
+        SqlCommand cmd;
+        SqlDataAdapter sqlda;
+        DataSet ds;
+        string str;
+        
+  
+ 
+
+        protected void Page_Load(object sender, EventArgs e)
+        { 
+            try
+            {
+                SqlConnection conn = new SqlConnection(connStr);
+                conn.Open();
+                str = "select userId,courseCode, completionDate,score from score where userId = '" + Session["u1"].ToString() + "%'";
+                cmd = new SqlCommand(str, conn);
+                int count = Convert.ToInt32(cmd.ExecuteScalar());
+                if (count > 0)
+                {
+                    bind();
+                    GridView1.Visible = true;
+                }
+                else
+                {
+
+                    GridView1.Visible = false;
+                }
+
+            }
+            catch { }
+        }
+        private void bind()
+        {
+           try{ SqlConnection conn = new SqlConnection(connStr);
+            conn.Open();
+            str = "select userId,courseCode, completionDate,score from score where userId like '" + Session["u1"].ToString() + "'";
+            cmd = new SqlCommand(str, conn);
+            sqlda = new SqlDataAdapter(cmd);
+            ds = new DataSet();
+            sqlda.Fill(ds, "score");
+            conn.Close();
+            GridView1.DataSource = ds;
+            GridView1.DataMember = "score";
+            GridView1.DataBind();
+        }  catch{}
+
+    }
+
+
+
+
+
+
+string builder test code
+a button with report
+score tb config
+
+ protected void Button2_Click(object sender, EventArgs e)
+        {
+            try
+            {
+
+                SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["db1ConnectionString7"].ToString());
+                string insert = "insert into score values(@userId,@courseCode,@completionDate,@score)";
+                SqlCommand cmd = new SqlCommand(insert, con);
+
+                cmd.Parameters.AddWithValue("@userId", Session["u1"].ToString());
+                cmd.Parameters.AddWithValue("@courseCode", Session["t"].ToString());
+                DateTime d = DateTime.Now;
+                cmd.Parameters.AddWithValue("@completionDate",d.ToShortDateString());
+                cmd.Parameters.AddWithValue("@score", score);
+                con.Open();
+                int a = cmd.ExecuteNonQuery();
+                if (a != 0)
+                {
+                    Response.Write("Record inserted in db");
+                    //  Response.Redirect("lOGIN.aspx");
+                }
+            }
+            catch { }
+         //  Response.Redirect("StringBuilderReport.aspx");
+        } 
+      
+     tb score code
+
+     CREATE TABLE [dbo].[score] (
+   
+    [userId]         VARCHAR (15) NOT NULL,
+    [courseCode]     VARCHAR (10) NOT NULL,
+    [completionDate] VARCHAR (10) NOT NULL,
+    [score]          VARCHAR (10) NOT NULL
+);
+
+
+
+      
